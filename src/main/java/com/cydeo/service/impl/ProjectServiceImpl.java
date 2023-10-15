@@ -12,6 +12,7 @@ import com.cydeo.repository.UserRepository;
 import com.cydeo.service.ProjectService;
 import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -99,7 +100,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> listAllProjectsDetails() {
 
-        UserDTO manager = userService.findByUserName("harold@manager.com");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserDTO manager = userService.findByUserName(username);
         User converted = userMapper.convertToEntity(manager);
         List<Project> list =  projectRepository.findByAssignedManager(converted);
         return list.stream().map(project-> {
